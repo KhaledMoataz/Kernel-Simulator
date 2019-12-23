@@ -56,21 +56,28 @@ int main(int argc, char **argv) {
             cout<<"nMessage received";
         string temp=message.mtext;
         int wait=-1;
-        if(temp[0]=='A')
+        if(temp[0]=='A'){
             wait=3;
-        else
-            wait=1;
-        temp.erase(temp.begin(),temp.begin()+1);    
-        for(int i=0;i<10;i++){
+            temp.erase(temp.begin(),temp.begin()+1);    
+            for(int i=0;i<10;i++){
                 if(arr[i]=="")
                     arr[i] = temp;
+        }
+        }
+        else{
+            wait=1;
+            temp.erase(temp.begin(),temp.begin()+1);
+            int x=stoi( temp );    
+            for(int i=0;i<10;i++){
+                if(i==x)
+                    arr[i] = "";
+        }
         }
         if(wait!=-1)
             sleep(wait);
         else cout<<"Error in wait"<<endl;    
         
     }  
-    
     }
     return 0;
 }
