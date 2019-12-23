@@ -30,7 +30,6 @@ bool compare(const tuple<int, int, string> &a, const tuple<int, int, string> &b)
 
 
 int main(int argc, char **argv) {
-
     signal(SIGUSR2, timeHandler);
     int processNumber;
     key_t processKernelQueueID;

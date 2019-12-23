@@ -112,6 +112,7 @@ struct diskStatusMessageBuffer readStatus(key_t msgqid) {
     } else {
         message.mType = 1;
     }
+    logDiskState(message);
     lastStatus = message;
     return lastStatus;
 }
@@ -162,6 +163,7 @@ int main() {
         exit(-1);
     }
 
+    sleep(1);
     //Kernel remaining code
     signal(SIGALRM, alarmHandler);
     signal(SIGCHLD, childHandler);
@@ -172,7 +174,7 @@ int main() {
 
     while (!nothingToDo) {
         while (disk_timer != 0) {
-            cout << timer << " " << disk_timer << endl;
+//            cout << timer << " " << disk_timer << endl;
             pause();
         }
         operationMessage = readProcessMessageQueue(processKernelQueueID);
