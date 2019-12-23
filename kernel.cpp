@@ -104,6 +104,7 @@ struct diskStatusMessageBuffer readStatus(key_t msgqid) {
     if (lastStatus.mType != 0) return lastStatus;
     int rec_val;
     struct diskStatusMessageBuffer message;
+    kill(disk_pid, SIGUSR1);
     rec_val = msgrcv(msgqid, &message, sizeof(message.empty), 0, !IPC_NOWAIT);
     if (rec_val == -1) {
         perror("Error in receive");
@@ -142,6 +143,7 @@ int main() {
     if (pid == 0) {
         string arg1 = to_string(kernelToDiskQueueID);
         string arg2 = to_string(diskToKernelQueueID);
+        cout << "Starting disk " << arg1 << " " << arg2 << endl;
         execl("./disk", arg1.c_str(), arg2.c_str());     //Start Disk, pass queue ID as an argument
     } else if (pid != -1) {
         disk_pid = pid;

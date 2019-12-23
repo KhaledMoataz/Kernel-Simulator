@@ -3,3 +3,4 @@ disk
 process
 kernel
 *.out
+.idea/

@@ -1,0 +1,3 @@
+0 ADD "hello"
+1 ADD "This is me"
+6 DEL 1
