@@ -34,10 +34,10 @@ void statusHandler (int signum){
             numberEmptySlots++;
         message.empty[i]=(arr[i]=="");
     }
-    if(numberEmptySlots==10)
-        message.mType = 2;
+    if(numberEmptySlots > 0)
+        message.mType = 1;
     else
-        message.mType=1;
+        message.mType = 2;
     int send_val = msgsnd(diskToKernelQueueID ,&message,sizeof(message.empty), !IPC_NOWAIT);
     if (send_val == -1)
         perror("Error in send in disk");
@@ -59,25 +59,29 @@ int main(int argc, char **argv) {
         int wait=-1;
         if(temp[0]=='A'){
             wait=3;
-            temp.erase(temp.begin(),temp.begin()+1);    
+            temp.erase(temp.begin(),temp.begin()+1);   
+            cout<<temp<<endl; 
             for(int i=0;i<10;i++){
-                if(arr[i]=="")
-                    arr[i] = temp;
+                if(arr[i]==""){
+                     arr[i] = temp;
+                     break;
+                }   
             }
         }
         else{
             wait=1;
             temp.erase(temp.begin(),temp.begin()+1);
+            cout<<temp<<endl;
             int x=stoi( temp );    
             for(int i=0;i<10;i++){
-                if(i==x)
+                if(i==x){
                     arr[i] = "";
+                    break;
+                }       
         }
         }
-        if(wait!=-1)
-            sleep(wait);
-        else cout<<"Error in wait"<<endl;    
         
+        sleep(wait);  
     }  
     }
     return 0;
