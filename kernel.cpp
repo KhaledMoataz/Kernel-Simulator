@@ -143,7 +143,6 @@ int main() {
     if (pid == 0) {
         string arg1 = to_string(kernelToDiskQueueID);
         string arg2 = to_string(diskToKernelQueueID);
-        cout << "Starting disk " << arg1 << " " << arg2 << endl;
         execl("./disk", arg1.c_str(), arg2.c_str());     //Start Disk, pass queue ID as an argument
     } else if (pid != -1) {
         disk_pid = pid;
