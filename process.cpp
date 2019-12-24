@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
     istringstream(argv[0]) >> processNumber;
     istringstream(argv[1]) >> processKernelQueueID;
     fstream file;
-    file.open("file.txt");
+    file.open("process" + to_string(processNumber) + ".txt");
     vector <string> lines;
     string x, y;
     int k = 0;

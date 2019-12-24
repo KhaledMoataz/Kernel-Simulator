@@ -1,0 +1,8 @@
+0 ADD "process 1 at time 0"
+2 ADD "process 1 at time 2"
+3 ADD "process 1 at time 3"
+7 ADD "process 1 at time 7"
+8 DEL 2
+9 ADD "process 1 at time 9"
+10 ADD "process 1 at time 10"
+11 DEL 0

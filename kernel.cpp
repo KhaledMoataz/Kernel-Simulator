@@ -21,7 +21,7 @@ struct diskStatusMessageBuffer {
     bool empty[10];             //0 for full slot, 1 for an empty one
 };
 
-int PROCESSES_NUM = 1;
+int PROCESSES_NUM = 3;
 int disk_timer = 0;
 int timer = 0;
 pid_t disk_pid = 0;
@@ -36,14 +36,15 @@ void logDiskState(struct diskStatusMessageBuffer message) {
     for (int i = 1; i < size; ++i) {
         line += (message.empty[i] ? ", true" : ", false");
     }
-    line += "]\n";
+    line += "] with mType = " + to_string(message.mType) + "\n";
     log << line;
+    cout << line;
 }
 
 void cancel() {
     nothingToDo = true;
     if (!is_disk_killed) {
-        kill(disk_pid, SIGKILL);
+        kill(disk_pid, SIGINT);
         pause();
     }
     log.close();
@@ -75,6 +76,7 @@ void childHandler(int signum) {
 void sendOperationToDisk(key_t msgqid, struct operationMessageBuffer message) {
     string logLine = "At time " + to_string(timer) + ": disk order -> " + message.mText + "\n";
     log << logLine;
+    cout << logLine;
     int send_val;
     send_val = msgsnd(msgqid, &message, sizeof(message.mText), IPC_NOWAIT);
     if (send_val == -1) {
@@ -93,7 +95,6 @@ struct operationMessageBuffer readProcessMessageQueue(key_t msgqid) {
     struct operationMessageBuffer message;
 
     message.mType = 0;
-    cout << "Receiving at " << timer << endl;
     rec_val = msgrcv(msgqid, &message, sizeof(message.mText), 0, !IPC_NOWAIT);
     if (rec_val == -1 && PROCESSES_NUM == 0) cancel();
 
@@ -109,8 +110,6 @@ struct diskStatusMessageBuffer readStatus(key_t msgqid) {
     if (rec_val == -1) {
         perror("Error in receive");
         message.mType = 0;
-    } else {
-        message.mType = 1;
     }
     logDiskState(message);
     lastStatus = message;
@@ -121,7 +120,7 @@ bool isValid(struct operationMessageBuffer operation, struct diskStatusMessageBu
     if (operation.mType == 1) {
         return status.mType == 1;
     } else {
-        return status.empty[operation.mText[0] - '0'];
+        return !status.empty[operation.mText[2] - '0'];
     }
 }
 
@@ -185,7 +184,8 @@ int main() {
         if (isValid(operationMessage, statusMessage)) {
             sendOperationToDisk(kernelToDiskQueueID, operationMessage);
         } else {
-            //Delete message
+            log << "Invalid Operation" << endl;
+            cout << "Invalid Operation" << endl;
         }
     }
     return 0;
